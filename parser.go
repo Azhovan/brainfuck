@@ -1,6 +1,8 @@
 package BrainFuck
 
-import "io"
+import (
+	"io"
+)
 
 // RuneParser will parse tokens and pack them in instructions
 // initial state of the RuneParser is Parse method
@@ -46,6 +48,9 @@ func (p *Parser) Parse() []*inst {
 
 	for {
 		tok, lit := p.scan()
+		if lit == "<nil>" {
+			break
+		}
 
 		switch tok {
 		case RIGHT, LEFT, PLUS, MINUS, PRINT, READ:
@@ -61,6 +66,7 @@ func (p *Parser) Parse() []*inst {
 			p.inst[openLoop].c = closeLoop
 		}
 	}
+	return p.inst
 }
 
 // scan method ignore invalid token returned from the tscan
