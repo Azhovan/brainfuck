@@ -16,7 +16,7 @@ const (
 	RBRACK              // ]
 
 	WS      // white space
-	ILLEGAL // not defined token
+	ILLEGAL //illegal tokens (like digits, letters)
 )
 
 // special var to indicate end of stream
