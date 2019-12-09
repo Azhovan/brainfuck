@@ -27,3 +27,25 @@ func TestParser_Parse(t *testing.T) {
 		}
 	}
 }
+
+func TestInnerLoops(t *testing.T) {
+	input := strings.NewReader("-[--[+]--]")
+	p := NewParser(input)
+	instructions := p.Parse()
+	expected := []*inst{
+		{i:"-", c:1},
+		{i:"[", c:7},
+		{i:"-", c:2},
+		{i:"[", c:5},
+		{i:"+", c:1},
+		{i:"]", c:3},
+		{i:"-", c:2},
+		{i:"]", c:1},
+	}
+
+	for i, v := range expected {
+		if *v != *instructions[i] {
+			t.Errorf("incorrect instruction literal. expected %+v given %+v", *v, *instructions[i])
+		}
+	}
+}
