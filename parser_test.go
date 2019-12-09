@@ -23,7 +23,7 @@ func TestParser_Parse(t *testing.T) {
 	}
 	for i, v := range expected {
 		if *v != *instructions[i] {
-			t.Errorf("incorrect instruction literal. expected %+v given %+v", *v, *instructions[i])
+			t.Errorf("incorrect instruction. expected %+v given %+v", *v, *instructions[i])
 		}
 	}
 }
@@ -45,7 +45,7 @@ func TestInnerLoops(t *testing.T) {
 
 	for i, v := range expected {
 		if *v != *instructions[i] {
-			t.Errorf("incorrect instruction literal. expected %+v given %+v", *v, *instructions[i])
+			t.Errorf("incorrect instruction. expected %+v given %+v", *v, *instructions[i])
 		}
 	}
 }
