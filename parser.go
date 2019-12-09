@@ -9,7 +9,6 @@ import (
 type RuneParser interface {
 	scan() (Token, string)
 	Parse() []*inst
-	NewParser(r io.Reader) *Parser
 }
 
 // inst is an abstraction for an operation which
@@ -79,7 +78,7 @@ func (p *Parser) scan() (Token, string) {
 
 }
 
-// tscan method (t stand for token) returns the next token from the scanner
+// tscan method (t stands for token) returns the next token from the scanner
 // if the previous token was not consumed properly, it will be returned again and buffer will be cleared
 func (p *Parser) tscan() (Token, string) {
 	// there is a token on the buffer
