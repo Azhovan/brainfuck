@@ -5,11 +5,17 @@ import (
 	"io"
 )
 
+// generic interface for an interpreter
+// Run executes created instructions by Parser
 type Interpreter interface {
-	Run()
+	Run() (bytes.Buffer, error)
 }
 
-// BrainFuckMachine is contains w Writer, p Parser and memory
+// BrainFuckMachine is an implementation of the Interpreter
+// it has internal parser which build convert inputs into instructions
+// result is written into w
+// memory struct keep memory data and cursor to move between memory cells and update their value
+// err != nil if any error happen during the print/read operation
 type BrainFuckMachine struct {
 	p      *Parser
 	w      bytes.Buffer
@@ -21,23 +27,28 @@ type BrainFuckMachine struct {
 	err error
 }
 
+// NewInterpreter create new Interpreter instance and initialize it's internal Parser with Reader r.
+// Parser has internal functionality to create instructions based on input
 func NewInterpreter(r io.Reader) *BrainFuckMachine {
 	return &BrainFuckMachine{
 		p: NewParser(r),
 	}
 }
 
+// Run methods executes the instructions
+// errors can happen during read/print operations
+// output returns in format of bytes
 func (b *BrainFuckMachine) Run() (bytes.Buffer, error) {
 	for _, inst := range b.p.Parse() {
 		switch inst.i {
 		case ">":
-			b.move(inst.c)
+			b.seek(inst.c)
 		case "<":
-			b.move(-1 * inst.c)
+			b.seek(-1 * inst.c)
 		case "+":
 			b.inc(inst.c)
 		case "-":
-			b.inc(-1 *inst.c)
+			b.inc(-1 * inst.c)
 		case ".":
 			b.doPrint(inst.c)
 		case ",":
@@ -63,8 +74,8 @@ func (b *BrainFuckMachine) cur() int {
 	return b.memory.cu
 }
 
-// move method moves the cursor in the memory by given offset
-func (b *BrainFuckMachine) move(offset int) {
+// seek method moves the cursor in the memory by given offset
+func (b *BrainFuckMachine) seek(offset int) {
 	b.memory.cu += offset
 }
 
