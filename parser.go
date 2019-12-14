@@ -1,4 +1,4 @@
-package BrainFuck
+package main
 
 import (
 	"io"
@@ -7,16 +7,14 @@ import (
 // RuneParser will parse tokens and pack them in instructions
 // initial state of the RuneParser is Parse method
 type RuneParser interface {
-	scan() (Token, string)
 	Parse() []*inst
 }
 
-// inst is an abstraction for an operation which
-// machine can understand
+// inst is an abstraction for an operation which machine can understand
 // i is one single instruction
 // c is complementary information about instruction like position or counts of occurrence
 type inst struct {
-	i string
+	t Token
 	c int
 }
 
@@ -28,9 +26,8 @@ type Parser struct {
 	s    *Scanner
 	inst []*inst
 	buf  struct {
-		t   Token  // last read token
-		lit string // last read literal
-		n   int    // buffer size
+		tok Token  // last read token
+		tokbufn bool   // whether the token buffer is in use.
 	}
 }
 
@@ -40,90 +37,73 @@ func NewParser(r io.Reader) *Parser {
 }
 
 func (p *Parser) Parse() []*inst {
-	// fast way keep track of loops by saving
+	// fast way keep to track of loops by saving
 	// the position of the of the LBRACK(left bracket) and RBRACK(right bracket)
-	// O(c) complexity
 	stack := []int{}
 
 	for {
-		tok, lit := p.scan()
-		if lit == "<nil>" {
+		tok := p.scan()
+		if tok.Value == "<nil>" {
 			break
 		}
-
-		switch tok {
-		case RIGHT, LEFT, PLUS, MINUS, PRINT, READ:
-			p.addInst(tok, lit)
-		case LBRACK:
-			openLoop := p.buildInst(lit, 0)
+		switch tok.Tok {
+		case RightToken, LeftToken, PlusToken, MinusToken, PrintToken, ReadToken:
+			p.addInst(tok)
+		case LeftBracketToken:
+			openLoop := p.buildInst(tok, 0)
 			stack = append(stack, openLoop)
-		case RBRACK:
+		case RightBracketToken:
 			// pop off the position of the last [
 			openLoop := stack[len(stack)-1]
 			stack = stack[:len(stack)-1]
-			closeLoop := p.buildInst(lit, openLoop)
+			closeLoop := p.buildInst(tok, openLoop)
 			p.inst[openLoop].c = closeLoop
 		}
+
 	}
 	return p.inst
 }
 
-// scan method ignore invalid token returned from the tscan
-func (p *Parser) scan() (Token, string) {
-	tok, lit := p.tscan()
-	if tok == ILLEGAL || tok == WS {
-		tok, lit = p.tscan()
-	}
-	return tok, lit
-
-}
-
-// tscan method (t stands for token) returns the next token from the scanner
-// if the previous token was not consumed properly, it will be returned again and buffer will be cleared
-func (p *Parser) tscan() (Token, string) {
+// scan ignores invalid token returned from the tscan
+func (p *Parser) scan() Token {
 	// there is a token on the buffer
-	if p.buf.n != 0 {
-		p.buf.n = 0
-		return p.buf.t, p.buf.lit
+	if p.buf.tokbufn {
+		p.buf.tokbufn = false
+		return p.buf.tok
 	}
-
-	// read the next token from the s
-	tok, lit := p.s.Scan()
-
-	// buffer it in buf
-	p.buf.t, p.buf.lit = tok, lit
-
-	return tok, lit
+	// read the next token from s
+	tok := p.s.Scan()
+	p.buf.tok = tok
+	return tok
 }
 
 // unscan sends the already consumed token back to buff
 func (p *Parser) unscan() {
-	p.buf.n = 1
+	p.buf.tokbufn = true
 }
 
 // addInst adds instructions to []*inst of Parser
 // for efficiency, if there are multiple occurrences of the
 // same token consecutively, we will fold it
-func (p *Parser) addInst(token Token, literal string) int {
+func (p *Parser) addInst(t Token) int {
 	// token occurrence count
 	c := 1
 	for {
-		tok, _ := p.scan()
-		if tok != token {
+		next := p.scan()
+		if next.Tok != t.Tok {
 			p.unscan()
 			break
 		}
 		c++
 	}
-
-	return p.buildInst(literal, c)
+	return p.buildInst(t, c)
 }
 
 // buildInst create a instruction from the given literals
-func (p *Parser) buildInst(literal string, c int) int {
+func (p *Parser) buildInst(t Token, c int) int {
 	// build instruction
 	inst := &inst{
-		i: literal,
+		t: t,
 		c: c,
 	}
 	// add inst to instruction list
