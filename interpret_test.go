@@ -1,4 +1,4 @@
-package BrainFuck
+package main
 
 import (
 	"bytes"
@@ -6,30 +6,44 @@ import (
 	"testing"
 )
 
-func TestBrainFuckMachine_SimpleCalculation(t *testing.T) {
-	output := prepare("++++++---", t)
-	if r, _, _ := output.ReadRune(); r != 3 {
-		t.Fatalf("incorrect value, ecpected 3, given %d", r)
+func TestBrainFuckMachine_Loop(t *testing.T) {
+	code := strings.NewReader("----[---->+<]>++.")
+	parser := NewParser(code)
+	input := new(bytes.Buffer)
+	output := new(bytes.Buffer)
+	bfm := NewInterpreter(input, output, parser)
+	_ = bfm.Run()
+
+	if string(bfm.memory.cell[1]) != "A" {
+		t.Errorf("wrong value, expected A got %s", string(bfm.memory.cell[1]))
 	}
+
+}
+func TestBrainFuckMachine_Loop2(t *testing.T) {
+	code := strings.NewReader("----[---->+<]>++.+.+.+.")
+	parser := NewParser(code)
+	input := new(bytes.Buffer)
+	output := new(bytes.Buffer)
+	bfm := NewInterpreter(input, output, parser)
+	_ = bfm.Run()
+
+	if output.String() != "ABCD" {
+		t.Errorf("wrong output, got %s", output.String())
+	}
+
 }
 
-func TestBrainFuckMachine_MovingForwardAndBackward(t *testing.T) {
-	output := prepare("+>>+++++++>+++", t)
-	for _, v := range []rune {1,7,3} {
-		if r, _, _ := output.ReadRune(); r != v {
-			t.Fatalf("incorrect value, ecpected %d, given %d", v, r)
-		}
-	}
-}
+func TestBrainFuckMachine_PrintHelloWorld(t *testing.T) {
+	input := `++++++++[>++++[>++>+++>+++>+<<<<-]>+> +>->>+[<]<-]>>.>---.+++++++ ..+ ++.>>.<-.<.+++.------.--------.>>+.>++.`
+	code := strings.NewReader(input)
+	parser := NewParser(code)
+	i := new(bytes.Buffer)
+	o := new(bytes.Buffer)
+	bfm := NewInterpreter(i, o, parser)
+	_ = bfm.Run()
 
-func prepare(str string, t *testing.T) bytes.Buffer {
-	input := strings.NewReader(str)
-	inst := NewInterpreter(input)
-	err := inst.Run()
-
-	if err != nil {
-		t.Fatalf("executing the instructions failed, got %+v", err)
+	if o.String() != "Hello World!\n" {
+		t.Errorf("wrong output, got %s", o.String())
 	}
 
-	return inst.Write()
 }
