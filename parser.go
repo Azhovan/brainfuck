@@ -1,4 +1,4 @@
-package main
+package BrainFuck
 
 import (
 	"io"
@@ -18,7 +18,8 @@ type inst struct {
 	c int
 }
 
-// Parser build AST (abstract structure tree)
+// Parser builds AST (abstract structure tree).
+// Parser uses Stack to keep track of loops and has a buffered channel to send out parsed tokens immediately
 // it contains the Scanner to tokenize the data from input
 // buf is an internal struct to process input at a time of scan
 // inst is an slice, which every member is one single instruction
@@ -26,36 +27,41 @@ type Parser struct {
 	s    *Scanner
 	inst []*inst
 	buf  struct {
-		tok Token  // last read token
-		tokbufn bool   // whether the token buffer is in use.
+		tok     Token // last read token
+		tokbufn bool  // whether the token buffer is in use.
 	}
+	item  chan inst // buffered channel to hold already generated token
+	stack Stack
 }
 
 // NewParser create new Parser from input r.
 func NewParser(r io.Reader) *Parser {
-	return &Parser{s: NewScanner(r)}
+	return &Parser{
+		s:    NewScanner(r),
+		item: make(chan inst, 2),
+	}
 }
 
 func (p *Parser) Parse() []*inst {
-	// fast way keep to track of loops by saving
-	// the position of the of the LBRACK(left bracket) and RBRACK(right bracket)
-	stack := []int{}
-
 	for {
 		tok := p.scan()
-		if tok.Value == "<nil>" {
+		if tok.Tok == IllegalToken {
 			break
 		}
 		switch tok.Tok {
-		case RightToken, LeftToken, PlusToken, MinusToken, PrintToken, ReadToken:
+		case
+			RightToken,
+			LeftToken,
+			PlusToken,
+			MinusToken,
+			PrintToken,
+			ReadToken:
 			p.addInst(tok)
 		case LeftBracketToken:
 			openLoop := p.buildInst(tok, 0)
-			stack = append(stack, openLoop)
+			p.stack.Push(openLoop)
 		case RightBracketToken:
-			// pop off the position of the last [
-			openLoop := stack[len(stack)-1]
-			stack = stack[:len(stack)-1]
+			openLoop := p.stack.Pop().(int)
 			closeLoop := p.buildInst(tok, openLoop)
 			p.inst[openLoop].c = closeLoop
 		}
@@ -108,5 +114,7 @@ func (p *Parser) buildInst(t Token, c int) int {
 	}
 	// add inst to instruction list
 	p.inst = append(p.inst, inst)
+	// send it to channel
+	//p.item <- *inst
 	return len(p.inst) - 1
 }

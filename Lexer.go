@@ -1,4 +1,4 @@
-package main
+package BrainFuck
 
 import (
 	"bufio"
@@ -36,7 +36,7 @@ func NewScanner(r io.Reader) *Scanner {
 }
 
 // Read method read the next rune from r.
-// err != nil only there is no more rune to read
+// err != nil only if there is no more rune to read
 func (s *Scanner) read() rune {
 	ch, _, err := s.r.ReadRune()
 	if err != nil {
@@ -45,7 +45,7 @@ func (s *Scanner) read() rune {
 	return ch
 }
 
-// Unread unreads the last data from r.
+// unread re-buffer the last read data.
 func (s *Scanner) unread() error {
 	if err := s.r.UnreadRune(); err != nil {
 		return err
@@ -53,7 +53,7 @@ func (s *Scanner) unread() error {
 	return nil
 }
 
-// scanWhitespace consumes all subsequent whitespace
+// scanWhitespace consumes all subsequent whitespace.
 func (s *Scanner) scanWhitespace() Token {
 	var buf bytes.Buffer
 	for {
@@ -61,7 +61,7 @@ func (s *Scanner) scanWhitespace() Token {
 		if ch == EOF {
 			break
 		} else if !isWhitespace(ch) {
-			s.unread()
+			_ = s.unread()
 			break
 		}
 		_, _ = buf.WriteRune(ch)
@@ -69,7 +69,7 @@ func (s *Scanner) scanWhitespace() Token {
 	return Token{Tok: WhitespaceToken, Value: buf.String()}
 }
 
-// scanLetterDigit ignore all subsequent letters or digits
+// scanLetterDigit ignore all subsequent letters or digits.
 func (s *Scanner) scanLetterDigit() Token {
 	var buff bytes.Buffer
 	for {
@@ -77,7 +77,7 @@ func (s *Scanner) scanLetterDigit() Token {
 		if ch == EOF {
 			break
 		} else if !isLetterDigit(ch) {
-			s.unread()
+			_ = s.unread()
 			break
 		}
 		buff.WriteRune(ch)
@@ -86,7 +86,7 @@ func (s *Scanner) scanLetterDigit() Token {
 	return Token{Tok: IllegalToken, Value: buff.String()}
 }
 
-// Scan returns the next Token and literal value from the reader.
+// Scan prepare and returns the next Token.
 func (s *Scanner) Scan() Token {
 
 	// read next rune

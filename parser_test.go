@@ -1,4 +1,4 @@
-package main
+package BrainFuck
 
 import (
 	"strings"
@@ -12,7 +12,7 @@ func TestParser_Parse(t *testing.T) {
 	// since we are folding instructions
 	// there is one instruction +, but 4 times
 	if len(instructions) != 5 {
-		t.Errorf("incorrect instruction's length, expected 5 got %+v", len(instructions))
+		t.Errorf("wrong length, expected 5 got %+v", len(instructions))
 	}
 	expected := []*inst{
 		&inst{c: 5, t: Token{Tok:PlusToken, Value:"+"}},
@@ -23,7 +23,7 @@ func TestParser_Parse(t *testing.T) {
 	}
 	for i, v := range expected {
 		if *v != *instructions[i] {
-			t.Errorf("incorrect instruction. expected %+v got %+v", *v, *instructions[i])
+			t.Errorf("wrong instruction. expected %+v got %+v", *v, *instructions[i])
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package main
+package BrainFuck
 
 import (
 	"io"
@@ -53,6 +53,7 @@ func NewInterpreter(i io.Reader, w io.Writer, parser *Parser) *BrainFuck {
 func (b *BrainFuck) Run() error {
 
 	inst := b.p.Parse()
+
 
 	for b.ip < len(inst) {
 		switch inst[b.ip].t.Value {
