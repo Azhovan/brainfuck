@@ -85,34 +85,6 @@ func (b *BrainFuck) Run() error {
 	return b.err
 }
 
-// Write method writes memory into buffer
-//func (b *BrainFuck) Write() io.Writer {
-//	b.reset()
-//	for {
-//		if v, err := b.scan(); err != nil {
-//			break
-//		} else if v != 0 {
-//			b.buf[0] = v
-//			_, _ = b.w.Write(b.buf)
-//		}
-//	}
-//	return b.w
-//}
-
-// scan method return next valid value in memory
-// and move the memory cursor forward
-// scan ignores zero filled cell
-//func (b *BrainFuck) scan() (byte, error) {
-//	if b.cur() >= MemorySize-1 {
-//		return byte(0), io.EOF
-//	}
-//	b.seek(1)
-//	if b.val() > 0 {
-//		return byte(b.val()), nil
-//	}
-//	return byte(0), nil
-//}
-
 // curr method returns the position of current cursor in the memory
 func (b *BrainFuck) cur() int {
 	return b.memory.cu
@@ -139,6 +111,7 @@ func (b *BrainFuck) inc(v int) {
 	b.memory.cell[b.cur()] = (b.memory.cell[b.cur()] + v) % 255
 }
 
+// dec method decrement the value of the current cell in memory by v
 func (b *BrainFuck) dec(v int) {
 	if b.memory.cell[b.cur()]-v >= 0 {
 		b.memory.cell[b.cur()] -= v

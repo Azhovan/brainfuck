@@ -6,20 +6,8 @@ import (
 	"testing"
 )
 
-func TestBrainFuckMachine_Loop(t *testing.T) {
-	code := strings.NewReader("----[---->+<]>++.")
-	parser := NewParser(code)
-	input := new(bytes.Buffer)
-	output := new(bytes.Buffer)
-	bfm := NewInterpreter(input, output, parser)
-	_ = bfm.Run()
 
-	if string(bfm.memory.cell[1]) != "A" {
-		t.Errorf("wrong value, expected A got %s", string(bfm.memory.cell[1]))
-	}
-
-}
-func TestBrainFuckMachine_Loop2(t *testing.T) {
+func TestBrainFuckMachine_LoopOperation(t *testing.T) {
 	code := strings.NewReader("----[---->+<]>++.+.+.+.")
 	parser := NewParser(code)
 	input := new(bytes.Buffer)
@@ -34,7 +22,7 @@ func TestBrainFuckMachine_Loop2(t *testing.T) {
 }
 
 func TestBrainFuckMachine_PrintHelloWorld(t *testing.T) {
-	input := `++++++++[>++++[>++>+++>+++>+<<<<-]>+> +>->>+[<]<-]>>.>---.+++++++ ..+ ++.>>.<-.<.+++.------.--------.>>+.>++.`
+	input := `++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.`
 	code := strings.NewReader(input)
 	parser := NewParser(code)
 	i := new(bytes.Buffer)

@@ -14,7 +14,7 @@ const (
 )
 
 // special var to indicate end of stream.
-var EOF = rune(0)
+var EOF = rune(-1)
 
 // Tok represents a lexical token type.
 type Tok int

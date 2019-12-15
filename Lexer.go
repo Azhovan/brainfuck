@@ -10,7 +10,7 @@ import (
 // LexReader is an interface that wraps Read method
 // Read method reads and return the next rune from the input
 type LexReader interface {
-	Read() rune
+	read() rune
 }
 
 // LexScanner is the interface that adds Unread method to the
@@ -20,7 +20,7 @@ type LexReader interface {
 // rune as the same previous call to Read
 type LexScanner interface {
 	LexReader
-	Unread() error
+	unread() error
 }
 
 // Scanner implements a tokenizer.
@@ -46,8 +46,11 @@ func (s *Scanner) read() rune {
 }
 
 // Unread unreads the last data from r.
-func (s *Scanner) unread() {
-	_ = s.r.UnreadRune()
+func (s *Scanner) unread() error {
+	if err := s.r.UnreadRune(); err != nil {
+		return err
+	}
+	return nil
 }
 
 // scanWhitespace consumes all subsequent whitespace
