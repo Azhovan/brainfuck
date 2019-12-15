@@ -51,10 +51,7 @@ func NewInterpreter(i io.Reader, w io.Writer, parser *Parser) *BrainFuck {
 // err != nil if error happen during read/print operations
 // output returns in format of bytes
 func (b *BrainFuck) Run() error {
-
 	inst := b.p.Parse()
-
-
 	for b.ip < len(inst) {
 		switch inst[b.ip].t.Value {
 		case ">":

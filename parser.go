@@ -19,7 +19,7 @@ type inst struct {
 }
 
 // Parser builds AST (abstract structure tree).
-// Parser uses Stack to keep track of loops and has a buffered channel to send out parsed tokens immediately
+// Parser uses Stack to keep track of loops
 // it contains the Scanner to tokenize the data from input
 // buf is an internal struct to process input at a time of scan
 // inst is an slice, which every member is one single instruction
@@ -30,16 +30,12 @@ type Parser struct {
 		tok     Token // last read token
 		tokbufn bool  // whether the token buffer is in use.
 	}
-	item  chan inst // buffered channel to hold already generated token
 	stack Stack
 }
 
 // NewParser create new Parser from input r.
 func NewParser(r io.Reader) *Parser {
-	return &Parser{
-		s:    NewScanner(r),
-		item: make(chan inst, 2),
-	}
+	return &Parser{s: NewScanner(r)}
 }
 
 func (p *Parser) Parse() []*inst {
@@ -115,6 +111,5 @@ func (p *Parser) buildInst(t Token, c int) int {
 	// add inst to instruction list
 	p.inst = append(p.inst, inst)
 	// send it to channel
-	//p.item <- *inst
 	return len(p.inst) - 1
 }
