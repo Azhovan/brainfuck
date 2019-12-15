@@ -1,4 +1,4 @@
-package BrainFuck
+package brainfuck
 
 import (
 	"io"
