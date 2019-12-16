@@ -13,7 +13,7 @@ These tokens represent the basic units of brain fuck syntax tree, such as whites
 Each scan returns a single token.
 
 types: 
-```json 
+```go 
 	IllegalToken       
 	LeftToken             // <
 	RightToken            // >
@@ -23,7 +23,8 @@ types:
 	ReadToken             // ,
 	LeftBracketToken      // [
 	RightBracketToken     // ]
-	WhitespaceToken
+	WhitespaceToken      
+	
 ```
 
 - The second step is to feed these tokens into the parser which creates the abstract syntax tree (AST) based on
@@ -47,7 +48,7 @@ Abstract syntax tree, is very simple but not flat. The first level is simply con
 identifiers (like: > < + - . ,). The second level contains the loops and it's internal
 blocks ( which can contains identifiers and loop block again), etc.
 
-#### How to run
+#### How to use
 
 	// create new io.Reader from inputs
 	code := strings.NewReader("----[---->+<]>++.+.+.+.")
