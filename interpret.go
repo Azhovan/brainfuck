@@ -22,7 +22,7 @@ const MemorySize int = 3000
 // BrainFuck is an implementation of the Interpreter
 // it has internal parser which builds instructions from the input
 // result is written into w
-// memory struct keep memory data and cursor to move between memory cells and update their value
+// memory struct keeps memory data and cursor to move between memory cells and update their values
 // err != nil if any error happen during the print/read operation
 type BrainFuck struct {
 	p      *Parser
@@ -37,7 +37,7 @@ type BrainFuck struct {
 	}
 }
 
-// NewInterpreter create new Interpreter instance and initialize it's internal Parser.
+// NewInterpreter creates new Interpreter instance and initialize it's internal Parser.
 func NewInterpreter(i io.Reader, w io.Writer, parser *Parser) *BrainFuck {
 	return &BrainFuck{
 		p:   parser,
@@ -94,22 +94,22 @@ func (b *BrainFuck) seek(offset int) {
 	b.memory.cu += offset
 }
 
-// jump method forward the cursor to position p
+// jump method forwards the cursor to position p.
 func (b *BrainFuck) jump(p int) {
 	b.ip = p
 }
 
-// reset method resets the cursor and writer to point to invalid state
+// reset method resets the cursor and writer to point to invalid state.
 func (b *BrainFuck) reset() {
 	b.memory.cu = 0
 }
 
-// inc method increment the value of the current cell in memory by v
+// inc method increments the value of the current cell in memory by v.
 func (b *BrainFuck) inc(v int) {
 	b.memory.cell[b.cur()] = (b.memory.cell[b.cur()] + v) % 255
 }
 
-// dec method decrement the value of the current cell in memory by v
+// dec method decrements the value of the current cell in memory by v.
 func (b *BrainFuck) dec(v int) {
 	if b.memory.cell[b.cur()]-v >= 0 {
 		b.memory.cell[b.cur()] -= v
@@ -118,13 +118,13 @@ func (b *BrainFuck) dec(v int) {
 	}
 }
 
-// val method returns current value of which cursor is pointing
+// val method returns current value of which cursor is pointing.
 func (b *BrainFuck) val() int {
 	return b.memory.cell[b.cur()]
 }
 
-// doPrint method print the value in current cell of the memory
-// if any error happen during the Write operation err property will be set
+// doPrint method prints the value in current cell of the memory
+// if any error happen during the Write operation err property will be set.
 func (b *BrainFuck) write(times int) bool {
 	b.buf[0] = byte(b.val())
 	for i := 0; i < times; i++ {
@@ -136,8 +136,8 @@ func (b *BrainFuck) write(times int) bool {
 	return true
 }
 
-// doRead read input from io
-// if any error happen during the Read operation err property will be set
+// doRead reads input from io
+// if any error happen during the Read operation err property will be set.
 func (b *BrainFuck) read(times int) bool {
 	for i := 0; i < times; i++ {
 		if _, err := b.i.Read(b.buf); err != nil {

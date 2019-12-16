@@ -33,7 +33,7 @@ func (s *Stack) Pop() Item {
 }
 
 // Create new instance of stack
-func (s *Stack) New() *Stack {
+func (s *Stack) NewStack() *Stack {
 	s.items = []Item{}
 	return s
 }

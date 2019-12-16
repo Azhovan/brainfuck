@@ -7,17 +7,17 @@ import (
 	"unicode"
 )
 
-// LexReader is an interface that wraps Read method
-// Read method reads and return the next rune from the input
+// LexReader is an interface that wraps Read method.
+// Read method reads and return the next rune from the input.
 type LexReader interface {
 	read() rune
 }
 
 // LexScanner is the interface that adds Unread method to the
-// basic LexReader
+// basic LexReader.
 //
 // Unread causes the next call to the Read method return the same
-// rune as the same previous call to Read
+// rune as the same previous call to Read.
 type LexScanner interface {
 	LexReader
 	unread() error
@@ -35,8 +35,8 @@ func NewScanner(r io.Reader) *Scanner {
 	}
 }
 
-// Read method read the next rune from r.
-// err != nil only if there is no more rune to read
+// Read method reads the next rune from r.
+// err != nil only if there is no more rune to read.
 func (s *Scanner) read() rune {
 	ch, _, err := s.r.ReadRune()
 	if err != nil {
@@ -45,7 +45,7 @@ func (s *Scanner) read() rune {
 	return ch
 }
 
-// unread re-buffer the last read data.
+// unread re-buffers the last read data.
 func (s *Scanner) unread() error {
 	if err := s.r.UnreadRune(); err != nil {
 		return err
@@ -69,7 +69,7 @@ func (s *Scanner) scanWhitespace() Token {
 	return Token{Tok: WhitespaceToken, Value: buf.String()}
 }
 
-// scanLetterDigit ignore all subsequent letters or digits.
+// scanLetterDigit ignores all subsequent letters or digits.
 func (s *Scanner) scanLetterDigit() Token {
 	var buff bytes.Buffer
 	for {
@@ -129,12 +129,12 @@ func (s *Scanner) next(ch rune) Token {
 	}
 }
 
-// isWhitespace returns True if ch is space, tab, new-line
+// isWhitespace returns True if ch is space, tab, new-line.
 func isWhitespace(ch rune) bool {
 	return unicode.IsSpace(ch)
 }
 
-// isLetterDigit return True if ch is letter or digit
+// isLetterDigit returns True if ch is letter or digit.
 func isLetterDigit(ch rune) bool {
 	return unicode.IsLetter(ch) || unicode.IsDigit(ch)
 }

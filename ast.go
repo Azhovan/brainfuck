@@ -19,7 +19,7 @@ var EOF = rune(-1)
 // Tok represents a lexical token type.
 type Tok int
 
-// Token, represent a lexical tokens.
+// Token represents a lexical tokens.
 type Token struct {
 	// the type of token.
 	Tok Tok

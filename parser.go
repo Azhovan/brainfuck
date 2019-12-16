@@ -33,7 +33,7 @@ type Parser struct {
 	stack Stack
 }
 
-// NewParser create new Parser from input r.
+// NewParser creates new Parser from input r.
 func NewParser(r io.Reader) *Parser {
 	return &Parser{s: NewScanner(r)}
 }
@@ -66,7 +66,7 @@ func (p *Parser) Parse() []*inst {
 	return p.inst
 }
 
-// scan ignores invalid token returned from the tscan
+// scan returns next token unit.
 func (p *Parser) scan() Token {
 	// there is a token on the buffer
 	if p.buf.tokbufn {
@@ -79,14 +79,14 @@ func (p *Parser) scan() Token {
 	return tok
 }
 
-// unscan sends the already consumed token back to buff
+// unscan sends the already consumed token back to buff.
 func (p *Parser) unscan() {
 	p.buf.tokbufn = true
 }
 
 // addInst adds instructions to []*inst of Parser
 // for efficiency, if there are multiple occurrences of the
-// same token consecutively, we will fold it
+// same token consecutively, we will fold it.
 func (p *Parser) addInst(t Token) int {
 	// token occurrence count
 	c := 1
@@ -101,7 +101,7 @@ func (p *Parser) addInst(t Token) int {
 	return p.buildInst(t, c)
 }
 
-// buildInst create a instruction from the given literals
+// buildInst creates a instruction from the given literals.
 func (p *Parser) buildInst(t Token, c int) int {
 	// build instruction
 	inst := &inst{
@@ -110,6 +110,5 @@ func (p *Parser) buildInst(t Token, c int) int {
 	}
 	// add inst to instruction list
 	p.inst = append(p.inst, inst)
-	// send it to channel
 	return len(p.inst) - 1
 }
