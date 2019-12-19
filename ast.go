@@ -28,9 +28,9 @@ type Token struct {
 	Value string
 
 	// The rune used for string tokens
-	Ending rune
+	// Ending rune
 
 	// Used for numeric tokens.
-	Number float64
-	Unit   string
+	// Number float64
+	// Unit   string
 }
